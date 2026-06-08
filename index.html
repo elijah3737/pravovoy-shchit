@@ -1576,6 +1576,44 @@ section[data-screen-label="Штрафы 2026"] .stat-card .num .u{color:var(--on
 .faq-q{display:flex!important;align-items:center;gap:16px}
 .faq-q .ic{margin-left:auto!important;flex:0 0 auto}
 </style>
+<style id="hallmark-redesign">
+/* Hallmark · redesign layer · pre-emit critique: P5 H4 E5 S4 R5 V4
+   preserve: brand(navy/amber/teal), Manrope/Inter, copy, IA, CTA */
+
+/* тинт белого (убрать pure #FFFFFF) */
+:root{ --bg:#FCFCFD; }
+
+/* A. Eyebrow → тихая типографическая метка: без pill, без точки */
+.eyebrow{ background:none!important; border:none!important; box-shadow:none!important;
+  padding:0!important; border-radius:0!important; font-size:12px!important;
+  letter-spacing:.16em!important; text-transform:uppercase; font-weight:700; opacity:.9; }
+.eyebrow::before{ display:none!important; }
+.section--navy .eyebrow, .geo .eyebrow{ background:none!important; border:none!important; }
+
+/* B. Карточки: снять цветную полосу-stripe, перейти на hairline */
+.stat-card::before{ display:none!important; }
+.stat-card{ border:1px solid var(--line); box-shadow:none; }
+.stat-card:hover{ box-shadow:var(--sh-sm); transform:translateY(-3px); }
+.section--navy .stat-card{ border-color:rgba(255,255,255,.12)!important; }
+.section--navy .stat-card:hover{ box-shadow:none; background:rgba(255,255,255,.08); }
+
+/* C. Лево-биас заголовков секций (ломаем centred-everything) */
+.s-head--center{ text-align:left!important; margin-left:0!important; margin-right:auto!important; }
+
+/* D. Премиум-типографика: оптический трекинг крупных заголовков */
+.hero h1{ letter-spacing:-.025em; }
+.s-head h2, .section h2, .content h1{ letter-spacing:-.021em; }
+.s-head{ max-width:720px; }
+
+/* E. Ритм секций: варьируем паддинг + hairline между светлыми */
+.section{ padding:116px 0; }
+.section--soft{ padding:92px 0; }
+.section:not(.section--navy):not(.section--soft) + .section:not(.section--navy):not(.section--soft){ border-top:1px solid var(--line); }
+
+/* F. CTA/кнопки — чуть премиальнее (мягче тень, точный hover) */
+.btn-primary{ box-shadow:0 1px 2px rgba(14,42,71,.10); }
+.btn-primary:hover{ box-shadow:0 6px 18px rgba(245,165,36,.28); }
+</style>
 </head>
 <body>
 
