@@ -1614,6 +1614,12 @@ section[data-screen-label="Штрафы 2026"] .stat-card .num .u{color:var(--on
 .btn-primary{ box-shadow:0 1px 2px rgba(14,42,71,.10); }
 .btn-primary:hover{ box-shadow:0 6px 18px rgba(245,165,36,.28); }
 </style>
+<style id="form-fix">
+#auditForm{display:flex;flex-direction:column;gap:12px}
+#auditForm .sc-input{width:100%}
+#auditForm>.btn{width:100%;justify-content:center}
+#auditForm .hp{position:absolute!important;left:-9999px!important;width:1px;height:1px;opacity:0;pointer-events:none}
+</style>
 </head>
 <body>
 
@@ -1920,8 +1926,13 @@ section[data-screen-label="Штрафы 2026"] .stat-card .num .u{color:var(--on
         <form id="auditForm" class="sc-field" novalidate="">
           <label class="sc-input">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></svg>
-            <input type="text" inputmode="url" placeholder="Адрес вашего сайта" aria-label="Адрес сайта">
+            <input type="text" inputmode="url" name="site" placeholder="Адрес вашего сайта" aria-label="Адрес сайта" required="">
           </label>
+          <label class="sc-input">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.09 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+            <input type="text" name="contact" placeholder="Телефон или email для связи" aria-label="Телефон или email" required="">
+          </label>
+          <input type="text" name="company" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
           <button type="submit" class="btn btn-primary">Получить отчёт</button>
         </form>
 
@@ -2282,6 +2293,36 @@ section[data-screen-label="Штрафы 2026"] .stat-card .num .u{color:var(--on
   (lenis? lenis.on('scroll',onScroll): window.addEventListener('scroll',onScroll));
   // init (retry until CDN ready)
   if(!initGSAP()){ var n=0,iv=setInterval(function(){ if(initGSAP()||++n>40) clearInterval(iv); },80); }
+})();
+</script>
+<script>
+(function(){
+  var af=document.getElementById('auditForm');
+  if(!af) return;
+  af.addEventListener('submit',function(e){
+    e.preventDefault();
+    var hp=af.querySelector('[name=company]');
+    if(hp && hp.value) return;
+    var site=(af.querySelector('[name=site]')||{value:''}).value.trim();
+    var contact=(af.querySelector('[name=contact]')||{value:''}).value.trim();
+    var btn=af.querySelector('button[type=submit]');
+    if(!site){ alert('Укажите адрес сайта'); return; }
+    if(!contact){ alert('Укажите телефон или email для связи'); return; }
+    var old=btn.textContent; btn.disabled=true; btn.textContent='Отправляем…';
+    fetch('send.php',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},
+      body:'site='+encodeURIComponent(site)+'&contact='+encodeURIComponent(contact)})
+      .then(function(r){return r.json();})
+      .then(function(d){
+        if(d && d.ok){
+          var box=af.closest('.scanner')||af.parentNode;
+          var esc=function(s){return s.replace(/[<>&]/g,function(c){return {'<':'&lt;','>':'&gt;','&':'&amp;'}[c];});};
+          box.innerHTML='<div style="text-align:center;padding:30px 12px">'+
+            '<div style="font-family:var(--font-head);font-weight:800;font-size:22px;color:var(--navy);margin-bottom:10px">Заявка принята</div>'+
+            '<p style="color:var(--ink-2);font-size:17px;line-height:1.6;margin:0">Спасибо! Получили сайт <b>'+esc(site)+'</b> — свяжемся с вами по <b>'+esc(contact)+'</b>.</p></div>';
+        } else { btn.disabled=false; btn.textContent=old; alert('Не удалось отправить. Напишите на hello@law-agent.ru'); }
+      })
+      .catch(function(){ btn.disabled=false; btn.textContent=old; alert('Ошибка отправки. Напишите на hello@law-agent.ru'); });
+  });
 })();
 </script>
 </body></html>
